@@ -1,9 +1,12 @@
 <?php
 
 use App\Gallery\GalleryCatalog;
+use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
+    // Семья — обычная роль; права гостя и администратора — в AccessTest.
+    $this->actingAs(User::factory()->create());
     $this->catalog = app(GalleryCatalog::class);
 });
 
@@ -69,7 +72,7 @@ it('returns 404 for unknown photos and albums', function () {
     $this->get('/albums/place-atlantis')->assertNotFound();
 });
 
-it('keeps favourites in the session and lists them in the favourites album', function () {
+it('keeps favourites per person and lists them in the favourites album', function () {
     $photo = collect($this->catalog->month($this->catalog->buckets()[0]['month']))->first(fn ($p) => ! $p->favorite);
 
     $this->from('/')->put("/photos/{$photo->id}/favorite", ['favorite' => true])->assertRedirect('/');

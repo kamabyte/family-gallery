@@ -40,8 +40,9 @@ jobs:
           cache-dependency-path: web/package-lock.json
       - run: composer install --no-interaction --no-progress --prefer-dist
       - run: npm ci --no-audit --no-fund
-      - run: npm run build
+      # Wayfinder's vite plugin runs `php artisan wayfinder:generate` — artisan needs .env first.
       - run: cp .env.example .env && php artisan key:generate
+      - run: npm run types:check && npm run build
       - run: php artisan test
       - run: vendor/bin/pint --test
 

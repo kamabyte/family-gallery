@@ -25,3 +25,8 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Wayfinder: генерируется при сборке (php artisan wayfinder:generate)
+/resources/js/actions
+/resources/js/routes
+/resources/js/wayfinder

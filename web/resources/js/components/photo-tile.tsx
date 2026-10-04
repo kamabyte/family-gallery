@@ -20,13 +20,13 @@ export function viewerHref(id: number, from?: string) {
 
 export function PhotoTile({ photo, width, height, from }: Props) {
     const [loaded, setLoaded] = useState(false);
-    const { selected, active, toggle } = useSelection();
+    const { enabled, selected, active, toggle } = useSelection();
     const isSelected = selected.has(photo.id);
     // Касание с удержанием — выбор, как в Google Photos: наведения на телефоне нет.
     const press = useRef<{ timer: number; fired: boolean } | null>(null);
 
     function startPress(pointerType: string) {
-        if (pointerType === 'mouse') return;
+        if (pointerType === 'mouse' || !enabled) return;
         const state = { fired: false, timer: 0 };
         state.timer = window.setTimeout(() => {
             state.fired = true;
@@ -91,6 +91,7 @@ export function PhotoTile({ photo, width, height, from }: Props) {
                     <Heart className="pointer-events-none absolute bottom-1.5 left-1.5 size-4 fill-white text-white drop-shadow" />
                 )}
             </Link>
+            {enabled && (
             <button
                 type="button"
                 onClick={() => toggle(photo.id)}
@@ -106,6 +107,7 @@ export function PhotoTile({ photo, width, height, from }: Props) {
             >
                 <Check className="size-3.5" strokeWidth={3} />
             </button>
+            )}
         </div>
     );
 }

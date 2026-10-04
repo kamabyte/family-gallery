@@ -4,9 +4,9 @@ namespace App\Gallery\Fake;
 
 use App\Gallery\Data\Album;
 use App\Gallery\Data\Photo;
+use App\Gallery\Favorites;
 use App\Gallery\GalleryCatalog;
 use Carbon\CarbonImmutable;
-use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Str;
 use Random\Engine\Mt19937;
 use Random\Randomizer;
@@ -18,7 +18,7 @@ use Random\Randomizer;
  * library — so links and screenshots stay stable.
  *
  * Images come from picsum.photos at each item's real aspect ratio; videos share
- * one CC0 clip. Favourites toggled in the UI live in the session.
+ * one CC0 clip. Favourites are the viewer's own (App\Gallery\Favorites).
  */
 final class FakeGalleryCatalog implements GalleryCatalog
 {
@@ -55,14 +55,20 @@ final class FakeGalleryCatalog implements GalleryCatalog
 
     private const SAMPLE_VIDEO = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
 
-    /** @var array<int, Photo>|null newest first, keyed by id */
+    /** @var array<int, Photo>|null generated library, newest first, keyed by id */
+    private ?array $generated = null;
+
+    /** @var array<int, Photo>|null the same with the viewer's favourites applied */
     private ?array $photos = null;
+
+    /** Whose favourites $photos carries (user id), to notice a different viewer. */
+    private ?int $photosFor = null;
 
     /** @var list<Album>|null */
     private ?array $albums = null;
 
     public function __construct(
-        private readonly Session $session,
+        private readonly Favorites $favorites,
         private readonly int $seed,
         private readonly CarbonImmutable $today,
     ) {}
@@ -229,14 +235,9 @@ final class FakeGalleryCatalog implements GalleryCatalog
 
     public function setFavorite(int $id, bool $favorite): void
     {
-        $overrides = $this->session->get('gallery.favorites', []);
-        $overrides[$id] = $favorite;
-        $this->session->put('gallery.favorites', $overrides);
-
-        if ($this->photos !== null && isset($this->photos[$id])) {
-            $this->photos[$id] = $this->photos[$id]->withFavorite($favorite);
-            $this->albums = null;
-        }
+        $this->favorites->set($id, $favorite);
+        $this->photos = null;
+        $this->albums = null;
     }
 
     public function status(): array
@@ -256,7 +257,14 @@ final class FakeGalleryCatalog implements GalleryCatalog
     /** @return array<int, Photo> */
     private function all(): array
     {
-        return $this->photos ??= $this->applyFavorites($this->generate());
+        $owner = $this->favorites->owner();
+        if ($this->photos === null || $this->photosFor !== $owner) {
+            $this->photos = $this->applyFavorites($this->generated ??= $this->generate());
+            $this->photosFor = $owner;
+            $this->albums = null;
+        }
+
+        return $this->photos;
     }
 
     /**
@@ -265,9 +273,9 @@ final class FakeGalleryCatalog implements GalleryCatalog
      */
     private function applyFavorites(array $photos): array
     {
-        foreach ($this->session->get('gallery.favorites', []) as $id => $favorite) {
+        foreach (array_keys($this->favorites->ids()) as $id) {
             if (isset($photos[$id])) {
-                $photos[$id] = $photos[$id]->withFavorite((bool) $favorite);
+                $photos[$id] = $photos[$id]->withFavorite(true);
             }
         }
 
@@ -383,7 +391,7 @@ final class FakeGalleryCatalog implements GalleryCatalog
             lon: $hasGps ? round($place[3] + ($random->nextFloat() - 0.5) * 0.08, 5) : null,
             cameraMake: $camera[0] ?? null,
             cameraModel: $camera[1] ?? null,
-            favorite: $random->nextFloat() < 0.05,
+            favorite: false,
             color: sprintf('hsl(%d %d%% %d%%)', $random->getInt(0, 359), $random->getInt(15, 40), $random->getInt(22, 42)),
             thumbUrl: "https://picsum.photos/seed/{$seed}/{$tw}/{$th}",
             previewUrl: "https://picsum.photos/seed/{$seed}/{$pw}/{$ph}",

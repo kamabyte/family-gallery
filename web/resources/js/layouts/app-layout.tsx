@@ -7,6 +7,7 @@ import { LibraryStatus } from '@/components/library-status';
 import { Logo, LogoMark } from '@/components/logo';
 import { SearchBox } from '@/components/search-box';
 import { SelectionBar } from '@/components/selection-bar';
+import { UserMenu } from '@/components/user-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { SelectionProvider, useSelection } from '@/hooks/use-selection';
 import { cn } from '@/lib/utils';
@@ -19,18 +20,21 @@ interface NavItem {
     match: RegExp;
     /** Только в нижней панели телефона: на компьютере поиск — в шапке. */
     mobileOnly?: boolean;
+    /** Только семье и администратору: у гостя избранного нет. */
+    family?: boolean;
 }
 
 const NAV: NavItem[] = [
     { href: '/', label: 'Фото', icon: Images, match: /^\/(\?.*)?$/ },
     { href: '/albums', label: 'Альбомы', icon: LibraryBig, match: /^\/albums(?!\/favorites)/ },
-    { href: '/albums/favorites', label: 'Избранное', icon: Heart, match: /^\/albums\/favorites/ },
+    { href: '/albums/favorites', label: 'Избранное', icon: Heart, match: /^\/albums\/favorites/, family: true },
     { href: '/search', label: 'Поиск', icon: Search, match: /^\/search/, mobileOnly: true },
 ];
 
 function Sidebar() {
     const { url, props } = usePage<SharedProps>();
     const places = props.sidebarPlaces ?? [];
+    const nav = NAV.filter((item) => !item.family || props.auth.can.family);
 
     return (
         <aside className="fixed inset-y-0 left-0 z-30 hidden w-[76px] flex-col border-r border-border/60 bg-background md:flex lg:w-64">
@@ -42,7 +46,7 @@ function Sidebar() {
             </div>
 
             <nav className="flex flex-col gap-0.5 px-3" aria-label="Разделы">
-                {NAV.filter((item) => !item.mobileOnly).map((item) => {
+                {nav.filter((item) => !item.mobileOnly).map((item) => {
                     const active = item.match.test(url);
                     const Icon = item.icon;
 
@@ -120,6 +124,7 @@ function Header() {
                     <div className="ml-auto flex items-center gap-1">
                         <AddPhotos />
                         <AppearanceMenu />
+                        <UserMenu />
                     </div>
                 </div>
             )}
@@ -129,15 +134,16 @@ function Header() {
 
 /** Нижняя панель вкладок на телефоне — как в iOS. */
 function TabBar() {
-    const { url } = usePage();
+    const { url, props } = usePage<SharedProps>();
+    const nav = NAV.filter((item) => !item.family || props.auth.can.family);
 
     return (
         <nav
             className="pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-chrome backdrop-blur-xl backdrop-saturate-150 md:hidden"
             aria-label="Разделы"
         >
-            <div className="grid h-14 grid-cols-4">
-                {NAV.map((item) => {
+            <div className="grid h-14" style={{ gridTemplateColumns: `repeat(${nav.length}, minmax(0, 1fr))` }}>
+                {nav.map((item) => {
                     const active = item.match.test(url);
                     const Icon = item.icon;
 

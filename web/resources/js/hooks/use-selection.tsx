@@ -1,7 +1,9 @@
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 interface Selection {
+    /** Гостю выбирать незачем: ни избранного, ни скачивания. */
+    enabled: boolean;
     selected: ReadonlySet<number>;
     active: boolean;
     toggle: (id: number) => void;
@@ -14,6 +16,7 @@ const SelectionContext = createContext<Selection | null>(null);
 /** Выбор нескольких кадров — общий для сетки и панели действий в шапке. */
 export function SelectionProvider({ children }: { children: ReactNode }) {
     const [selected, setSelected] = useState<ReadonlySet<number>>(new Set());
+    const enabled = usePage().props.auth.can.family;
 
     const toggle = useCallback((id: number) => {
         setSelected((current) => {
@@ -46,7 +49,10 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
         [clear],
     );
 
-    const value = useMemo(() => ({ selected, active: selected.size > 0, toggle, setMany, clear }), [selected, toggle, setMany, clear]);
+    const value = useMemo(
+        () => ({ enabled, selected, active: selected.size > 0, toggle, setMany, clear }),
+        [enabled, selected, toggle, setMany, clear],
+    );
 
     return <SelectionContext.Provider value={value}>{children}</SelectionContext.Provider>;
 }

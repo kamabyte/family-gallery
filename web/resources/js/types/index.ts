@@ -54,7 +54,24 @@ export interface LibraryStatus {
     size_bytes: number;
 }
 
+export type Role = 'admin' | 'member' | 'guest';
+
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    role: Role;
+    role_label: string;
+}
+
+export interface Auth {
+    user: User;
+    /** Что показывать; сами права проверяет сервер (гейты admin и family). */
+    can: { admin: boolean; family: boolean };
+}
+
 export interface SharedProps {
+    auth: Auth;
     sidebarPlaces: { id: string; name: string; count: number }[];
     library: LibraryStatus;
     [key: string]: unknown;
@@ -65,3 +82,12 @@ export interface Toast {
     message: string;
     description?: string | null;
 }
+
+export type TwoFactorSetupData = {
+    svg: string;
+    url: string;
+};
+
+export type TwoFactorSecretKey = {
+    secretKey: string;
+};

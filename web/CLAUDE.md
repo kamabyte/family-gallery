@@ -14,6 +14,11 @@ shadcn new-york, Pest); UI copy is Russian, like the Android client.
   `tests/Unit/FakeGalleryCatalogTest.php`).
 - Pages live in `resources/js/pages/*.tsx`; `app.tsx` gives every page `AppLayout`
   except `viewer`, which is full-screen.
+- Auth mirrors `~/Code/personal/awgkeys/web`: Fortify (login, 2FA, password confirm; no
+  registration, no email reset, no passkeys — WebAuthn needs HTTPS), `App\Enums\Role`
+  (admin/member/guest), gates `admin` and `family`, Wayfinder route helpers (generated,
+  gitignored). Favourites are per user (`favorites` table via `App\Gallery\Favorites`,
+  which resolves the user on every call — never capture the user at construction).
 - Timeline months load lazily from `GET /api/timeline/{YYYY-MM}`; the page sends only
   `buckets` plus the first two months.
 

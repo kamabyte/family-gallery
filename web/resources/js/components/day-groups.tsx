@@ -47,7 +47,7 @@ export function groupByDay(photos: Photo[]): Day[] {
 
 export function DayGroups({ photos, width, rowHeight, from }: Props) {
     const days = useMemo(() => groupByDay(photos), [photos]);
-    const { selected, active, setMany } = useSelection();
+    const { enabled, selected, active, setMany } = useSelection();
 
     return (
         <div className="flex flex-col gap-6">
@@ -58,6 +58,7 @@ export function DayGroups({ photos, width, rowHeight, from }: Props) {
                 return (
                     <section key={day.date} aria-label={dayTitle(day.date)}>
                         <header className="group/day flex h-10 items-center gap-2 pb-1">
+                            {enabled && (
                             <button
                                 type="button"
                                 onClick={() => setMany(ids, !all)}
@@ -71,6 +72,7 @@ export function DayGroups({ photos, width, rowHeight, from }: Props) {
                             >
                                 <CircleCheck className="size-5" />
                             </button>
+                            )}
                             <h3 className="text-[15px] font-semibold tracking-tight">{dayTitle(day.date)}</h3>
                             {day.place && (
                                 <span className="flex items-center gap-1 truncate text-sm text-muted-foreground">

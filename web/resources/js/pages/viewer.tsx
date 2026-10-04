@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Camera, ChevronLeft, ChevronRight, Download, FileImage, Heart, Info, MapPin, Pause, Play, X } from 'lucide-react';
 import { type PointerEvent, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -39,6 +39,8 @@ export default function Viewer({ photo, previous, next, position, from, albums }
     const [chrome, setChrome] = useState(true);
     const [loaded, setLoaded] = useState<number | null>(null);
     const swipe = useRef<{ x: number; y: number } | null>(null);
+    // Гостю — только смотреть: ни избранного, ни скачивания (права проверяет и сервер).
+    const family = usePage().props.auth.can.family;
 
     const go = useCallback(
         (target: Photo | null) => {
@@ -59,8 +61,9 @@ export default function Viewer({ photo, previous, next, position, from, albums }
     }, [from]);
 
     const toggleFavorite = useCallback(() => {
+        if (!family) return;
         router.put(`/photos/${photo.id}/favorite`, { favorite: !photo.favorite }, { preserveScroll: true, preserveState: true });
-    }, [photo.id, photo.favorite]);
+    }, [photo.id, photo.favorite, family]);
 
     // Клавиатура: стрелки, Esc, i — сведения, f — избранное, пробел — слайд-шоу.
     useEffect(() => {
@@ -178,15 +181,19 @@ export default function Viewer({ photo, previous, next, position, from, albums }
                             {playing ? <Pause className="size-5 fill-current" /> : <Play className="size-5 fill-current" />}
                         </ViewerButton>
                     )}
-                    <ViewerButton label={photo.favorite ? 'Убрать из избранного (F)' : 'В избранное (F)'} onClick={toggleFavorite}>
-                        <Heart className={cn('size-5', photo.favorite && 'fill-[#ff5a5f] text-[#ff5a5f]')} />
-                    </ViewerButton>
-                    <ViewerButton
-                        label="Скачать оригинал"
-                        onClick={() => toast('Скачивание появится вместе с настоящим API', { description: photo.filename })}
-                    >
-                        <Download className="size-5" />
-                    </ViewerButton>
+                    {family && (
+                        <>
+                            <ViewerButton label={photo.favorite ? 'Убрать из избранного (F)' : 'В избранное (F)'} onClick={toggleFavorite}>
+                                <Heart className={cn('size-5', photo.favorite && 'fill-[#ff5a5f] text-[#ff5a5f]')} />
+                            </ViewerButton>
+                            <ViewerButton
+                                label="Скачать оригинал"
+                                onClick={() => toast('Скачивание появится вместе с настоящим API', { description: photo.filename })}
+                            >
+                                <Download className="size-5" />
+                            </ViewerButton>
+                        </>
+                    )}
                     <ViewerButton label="Сведения (I)" onClick={() => setInfo(!info)} active={info}>
                         <Info className="size-5" />
                     </ViewerButton>

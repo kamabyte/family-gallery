@@ -1,14 +1,13 @@
 <?php
 
 use App\Gallery\Fake\FakeGalleryCatalog;
+use App\Gallery\Favorites;
 use Carbon\CarbonImmutable;
-use Illuminate\Session\ArraySessionHandler;
-use Illuminate\Session\Store;
 
 function fakeCatalog(string $now, int $seed = 42): FakeGalleryCatalog
 {
     return new FakeGalleryCatalog(
-        new Store('test', new ArraySessionHandler(10)),
+        Favorites::none(),
         $seed,
         CarbonImmutable::parse($now, 'Europe/Moscow'),
     );
