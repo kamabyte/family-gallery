@@ -1,4 +1,4 @@
-# Gallery indexer — Dokploy stack (type Compose, source Raw).
+# Family gallery workers — Dokploy stack (type Compose, source Raw).
 #
 # One long-running container: indexes on start, every INDEX_INTERVAL, and within a
 # minute or so of new files settling in Imports. No domain, no ports — the app reads the
@@ -10,7 +10,7 @@
 
 services:
   indexer:
-    image: ghcr.io/kamabyte/family-gallery-indexer:${IMAGE_TAG:-latest}
+    image: ghcr.io/kamabyte/family-gallery-workers:${IMAGE_TAG:-latest}
     pull_policy: always
     restart: unless-stopped
     init: true                          # reaps ffmpeg children, forwards SIGTERM

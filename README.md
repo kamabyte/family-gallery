@@ -33,11 +33,11 @@ indexer:
 
 ```
 .
-├── indexer/          # Python 3 indexer — run it where the SMB share is mounted
-│   ├── indexer.py
-│   ├── requirements.txt
-│   └── README.md
-└── app/              # Android app, TV + phone (Kotlin, Jetpack Compose)
+├── workers/              # Python workers: indexer.py + service.py (runs it on the NAS)
+├── clients/
+│   └── android/          # Android app, TV + phone (Kotlin, Jetpack Compose; Gradle root)
+├── web/                  # Web app: Laravel + Inertia + React (prototype, fake data)
+└── deploy/compose.yml    # Dokploy stack for the workers
 ```
 
 ## Form factors
@@ -82,10 +82,10 @@ rather than discovered on a device (`GridMetricsTest`).
 
 ## Getting started
 
-1. **Index your photos** — see [`indexer/README.md`](indexer/README.md).
-2. **Run the app** — open the repo in Android Studio, put your SMB host/share in
-   `local.properties` (`gallery.host`, `gallery.share`, `gallery.basePath` — see
-   [`app/README.md`](app/README.md)), and run on an Android TV device/emulator or on a phone. The same
+1. **Index your photos** — see [`workers/README.md`](workers/README.md).
+2. **Run the app** — open `clients/android/` in Android Studio, put your SMB host/share in
+   `clients/android/local.properties` (`gallery.host`, `gallery.share`, `gallery.basePath` — see
+   [`clients/android/app/README.md`](clients/android/app/README.md)), and run on an Android TV device/emulator or on a phone. The same
    `assembleDebug` output installs on both; the device decides which shell it gets.
 
 ## Production-hardening notes
@@ -99,9 +99,9 @@ rather than discovered on a device (`GridMetricsTest`).
 - **Bounded memory + real totals.** Paging keeps only a small window resident (placeholders
   give accurate totals and stable absolute positions), so the viewer shows the true
   `position / total` even across 10–20k items.
-- **Tests.** JVM unit tests: `./gradlew testDebugUnitTest`. Indexer tests:
-  `cd indexer && .venv/bin/python -m unittest discover -s tests`. Release build (R8):
-  `./gradlew assembleRelease`. Device benchmarks: see [`macrobenchmark/README.md`](macrobenchmark/README.md).
+- **Tests.** JVM unit tests: `cd clients/android && ./gradlew testDebugUnitTest`. Workers tests:
+  `cd workers && .venv/bin/python -m unittest discover -s tests`. Release build (R8):
+  `./gradlew assembleRelease`. Device benchmarks: see [`clients/android/macrobenchmark/README.md`](clients/android/macrobenchmark/README.md).
 - **Device verification:** run the supplied benchmark journeys on the weakest target TV box
   before quoting performance numbers; D-pad focus and cache behaviour must be tested with the
   real SMB library rather than an emulator.

@@ -1,4 +1,4 @@
-# Gallery indexer
+# Workers: gallery indexer
 
 Turns a photo/video library into the SQLite catalog + thumbnails the Android TV app reads.
 Run it on any machine (PC/Mac/NAS) where the SMB share is **mounted as a normal folder**.
@@ -58,8 +58,8 @@ On the home server the indexer runs unattended as a Dokploy stack instead of by 
 drop files into \\10.20.1.100\Photos\Imports  ─►  within ~6 min they're filed and published
 ```
 
-- **Image:** `ghcr.io/kamabyte/family-gallery-indexer`, built by
-  `.github/workflows/indexer-image.yml` (tests first) on every push touching `indexer/`;
+- **Image:** `ghcr.io/kamabyte/family-gallery-workers`, built by
+  `.github/workflows/workers-image.yml` (tests first) on every push touching `workers/`;
   `latest` tracks `main`.
 - **Stack:** [`deploy/compose.yml`](../deploy/compose.yml), Dokploy project `family-gallery`,
   stack `indexer`, source Raw. Library on the system SSD at `/srv/family-gallery/photos`
@@ -83,7 +83,7 @@ docker exec -it $(docker ps -qf name=family-gallery) python indexer.py --source 
 docker exec -it $(docker ps -qf name=family-gallery) python refresh_metadata.py --source /photos --dry-run
 ```
 
-Deploy a new version: push to `main`, wait for the `indexer-image` run, then **Deploy** the
+Deploy a new version: push to `main`, wait for the `workers-image` run, then **Deploy** the
 stack in Dokploy (`pull_policy: always` fetches the new `latest`).
 
 ### Fixing dates without re-encoding: `refresh_metadata.py`

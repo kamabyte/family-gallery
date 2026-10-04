@@ -1,6 +1,6 @@
 """Tests for the gallery indexer.
 
-Run from the indexer/ directory with the project venv:
+Run from the workers/ directory with the project venv:
 
     .venv/bin/python -m unittest discover -s tests -v
 
@@ -22,7 +22,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-# Make indexer.py importable when running from indexer/ or indexer/tests/.
+# Make indexer.py importable when running from workers/ or workers/tests/.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from PIL import Image  # noqa: E402

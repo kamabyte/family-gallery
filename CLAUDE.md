@@ -1,9 +1,14 @@
 # photogallery-androidtv
 
-Family gallery for Android TV **and** phones: a Python indexer (`indexer/indexer.py`)
-pre-bakes thumbnails, video proxies and an SQLite catalog onto an SMB share; the
-Kotlin/Compose app (`app/`) validates, swaps in and browses that catalog. See `README.md`
-for the data flow and `indexer/README.md` for running the indexer.
+Family gallery for Android TV **and** phones, laid out like MyTube:
+
+| Dir | What |
+|---|---|
+| `workers/` | Python workers: the indexer (`workers/indexer.py`) pre-bakes thumbnails, video proxies and an SQLite catalog onto the SMB share; `service.py` runs it unattended on the NAS (Docker image `family-gallery-workers`, stack in `deploy/compose.yml`) |
+| `clients/android/` | Kotlin/Compose app — a self-contained Gradle project (run `./gradlew` from there); validates, swaps in and browses that catalog |
+| `web/` | Laravel + Inertia + React web app (prototype on fake data for now) |
+
+See `README.md` for the data flow and `workers/README.md` for running the indexer.
 
 **One APK, two shells.** `detectFormFactor` resolves `FormFactor.Tv` / `FormFactor.Mobile`
 once in `MainActivity` and publishes it via `LocalFormFactor`; `TvShell` (hidden D-pad rail)
@@ -35,7 +40,7 @@ deferred, load it with `ToolSearch("select:mcp__codegraph__codegraph_explore")` 
 falling back to grep.
 
 `affected` resolves this project's tests without a filter — it finds both
-`app/src/test/**/*Test.kt` and `indexer/tests/test_*.py`. No `-f` glob needed.
+`clients/android/app/src/test/**/*Test.kt` and `workers/tests/test_*.py`. No `-f` glob needed.
 
 ### Anchor symbols — paste these straight into a query
 
@@ -94,6 +99,6 @@ actually add it.
 ## Tests
 
 ```bash
-./gradlew testDebugUnitTest                                   # JVM unit tests (app/)
-cd indexer && .venv/bin/python -m unittest discover -s tests  # indexer tests
+cd clients/android && ./gradlew testDebugUnitTest            # JVM unit tests
+cd workers && .venv/bin/python -m unittest discover -s tests  # workers tests
 ```

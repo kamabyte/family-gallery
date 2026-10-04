@@ -5,7 +5,7 @@ container header carries the *download* time while the true capture instant surv
 ``com.apple.quicktime.creationdate``. Reading those two in the wrong order silently dated a whole
 library to the day it was indexed, so the ordering is pinned by test.
 
-Run from the indexer/ directory with the project venv:
+Run from the workers/ directory with the project venv:
 
     .venv/bin/python -m unittest discover -s tests -v
 """

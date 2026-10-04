@@ -1,6 +1,6 @@
-# Gallery indexer for the NAS: service.py runs indexer.py on a schedule and whenever new
-# files land in Imports. Image ghcr.io/kamabyte/family-gallery-indexer is built by
-# .github/workflows/indexer-image.yml and run by Dokploy from deploy/compose.yml.
+# Family gallery workers for the NAS: service.py runs indexer.py on a schedule and whenever
+# new files land in Imports. Image ghcr.io/kamabyte/family-gallery-workers is built by
+# .github/workflows/workers-image.yml and run by Dokploy from deploy/compose.yml.
 # The library (originals + .gallery/) is bind-mounted at /photos; nothing else is stateful.
 FROM python:3.12-slim-trixie
 

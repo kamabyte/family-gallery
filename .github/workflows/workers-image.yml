@@ -1,15 +1,15 @@
-# Indexer image in GHCR (template: homelab apps/_template).
+# Workers image in GHCR (indexer + its service loop) (template: homelab apps/_template).
 #
-# Tags: sha-<short commit> on every push that touches the indexer, latest for main.
+# Tags: sha-<short commit> on every push that touches workers/, latest for main.
 # Dokploy pulls latest; pin a sha- tag to roll back.
-name: indexer-image
+name: workers-image
 
 on:
   push:
     branches: ['**']
     paths:
-      - 'indexer/**'
-      - '.github/workflows/indexer-image.yml'
+      - 'workers/**'
+      - '.github/workflows/workers-image.yml'
   workflow_dispatch:
 
 permissions:
@@ -17,7 +17,7 @@ permissions:
   packages: write
 
 concurrency:
-  group: indexer-image-${{ github.ref }}
+  group: workers-image-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -25,14 +25,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: indexer
+        working-directory: workers
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: pip
-          cache-dependency-path: indexer/requirements.txt
+          cache-dependency-path: workers/requirements.txt
       - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
       - run: pip install -r requirements.txt
       - run: python -m unittest discover -s tests
@@ -54,14 +54,14 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}-indexer
+          images: ghcr.io/${{ github.repository }}-workers
           tags: |
             type=sha,prefix=sha-
             type=raw,value=latest,enable={{is_default_branch}}
 
       - uses: docker/build-push-action@v6
         with:
-          context: indexer
+          context: workers
           # The NAS is x86-64 (i5-3470).
           platforms: linux/amd64
           push: true

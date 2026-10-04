@@ -1,17 +1,17 @@
 # Family Gallery — Android TV app
 
-Kotlin + Jetpack Compose for TV. Browses the catalog produced by the [`indexer`](../indexer).
+Kotlin + Jetpack Compose for TV. Browses the catalog produced by the [indexer](../../../workers).
 
 ## Open & run
 
-1. Open the **repository root** in Android Studio (Ladybug or newer). On first sync,
+1. Open **`clients/android/`** (the Gradle root) in Android Studio (Ladybug or newer). On first sync,
    Gradle downloads the wrapper distribution and all dependencies.
-2. Set your NAS details in `local.properties` in the repository root (it is git-ignored;
+2. Set your NAS details in `clients/android/local.properties` (it is git-ignored;
    Android Studio creates it with `sdk.dir`):
    ```properties
-   gallery.host=192.168.1.10      # your NAS/PC IP or hostname
-   gallery.share=Media            # the SMB share name
-   gallery.basePath=Photos        # folder inside the share the indexer ran on; blank = share root
+   gallery.host=10.20.1.100       # the home server
+   gallery.share=Photos           # the SMB share name (system SSD, /srv/family-gallery/photos)
+   gallery.basePath=              # folder inside the share the indexer ran on; blank = share root
    # gallery.username= / gallery.password= / gallery.domain=   — only if the share needs auth
    ```
    Anonymous access is the default. The values are baked into `BuildConfig` at build time

@@ -1,11 +1,11 @@
 # --- Android / Gradle ---
 *.iml
 .gradle/
-/local.properties
-/.idea/
+clients/android/local.properties
+.idea/
 .DS_Store
 build/
-/captures/
+captures/
 .externalNativeBuild/
 .cxx/
 .kotlin/
@@ -18,14 +18,14 @@ build/
 *.log
 
 # --- Python indexer ---
-indexer/.venv/
+workers/.venv/
 __pycache__/
 *.pyc
 .pytest_cache/
 
 # --- Local config with secrets / machine paths ---
-indexer/config.local.*
-app/src/main/res/values/secrets.xml
+workers/config.local.*
+clients/android/app/src/main/res/values/secrets.xml
 
 # --- Generated gallery data (kept on the NAS, never committed) ---
 .gallery/
