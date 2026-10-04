@@ -1,0 +1,165 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@source '../views';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+    --font-sans:
+        -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI Variable', 'Segoe UI', Roboto,
+        'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-display:
+        -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI Variable Display', 'Segoe UI', Roboto,
+        'Helvetica Neue', Arial, sans-serif;
+
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-brand: var(--brand);
+    --color-brand-foreground: var(--brand-foreground);
+    --color-chrome: var(--chrome);
+    --color-chart-1: var(--chart-1);
+
+    --animate-fade-in: fade-in 0.4s ease-out both;
+    --animate-bezel: bezel 0.6s ease-out both;
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(4px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    @keyframes bezel {
+        from {
+            opacity: 1;
+            transform: scale(0.85);
+        }
+        to {
+            opacity: 0;
+            transform: scale(1.25);
+        }
+    }
+}
+
+/* Светлая тема — как iOS: почти белый фон, белые поверхности. Акцент — тёплый янтарь. */
+:root {
+    --radius: 0.75rem;
+    --background: oklch(0.975 0.002 286);
+    --foreground: oklch(0.18 0.005 286);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.18 0.005 286);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.18 0.005 286);
+    --primary: oklch(0.2 0.005 286);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.93 0.003 286);
+    --secondary-foreground: oklch(0.2 0.005 286);
+    --muted: oklch(0.935 0.003 286);
+    --muted-foreground: oklch(0.5 0.01 286);
+    --accent: oklch(0.925 0.004 286);
+    --accent-foreground: oklch(0.2 0.005 286);
+    --destructive: oklch(0.58 0.22 27);
+    --destructive-foreground: oklch(0.985 0 0);
+    --border: oklch(0.9 0.004 286);
+    --input: oklch(0.9 0.004 286);
+    --ring: oklch(0.66 0.15 58);
+    --brand: oklch(0.64 0.16 52);
+    --brand-foreground: oklch(0.99 0 0);
+    --chrome: oklch(0.985 0.002 286 / 0.78);
+    --chart-1: oklch(0.64 0.16 52);
+}
+
+/* Тёмная — основная: фотографии смотрятся на почти чёрном. */
+.dark {
+    --background: oklch(0.13 0.004 286);
+    --foreground: oklch(0.97 0 0);
+    --card: oklch(0.18 0.005 286);
+    --card-foreground: oklch(0.97 0 0);
+    --popover: oklch(0.2 0.006 286);
+    --popover-foreground: oklch(0.97 0 0);
+    --primary: oklch(0.97 0 0);
+    --primary-foreground: oklch(0.16 0.005 286);
+    --secondary: oklch(0.24 0.006 286);
+    --secondary-foreground: oklch(0.97 0 0);
+    --muted: oklch(0.22 0.006 286);
+    --muted-foreground: oklch(0.7 0.01 286);
+    --accent: oklch(0.26 0.007 286);
+    --accent-foreground: oklch(0.97 0 0);
+    --destructive: oklch(0.62 0.21 25);
+    --destructive-foreground: oklch(0.985 0 0);
+    --border: oklch(1 0 0 / 0.09);
+    --input: oklch(1 0 0 / 0.12);
+    --ring: oklch(0.76 0.14 65);
+    --brand: oklch(0.78 0.15 68);
+    --brand-foreground: oklch(0.2 0.03 60);
+    --chrome: oklch(0.13 0.004 286 / 0.72);
+    --chart-1: oklch(0.78 0.15 68);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    html {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings: 'cv11', 'ss01';
+    }
+
+    ::selection {
+        background: color-mix(in oklch, var(--brand) 35%, transparent);
+    }
+}
+
+@utility scrollbar-none {
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@utility font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+}
+
+@utility pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Плитка ленты проявляется, когда картинка догрузилась. */
+@utility fade-in-image {
+    animation: fade-in 0.35s ease-out both;
+}

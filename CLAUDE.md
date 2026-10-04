@@ -101,4 +101,5 @@ actually add it.
 ```bash
 cd clients/android && ./gradlew testDebugUnitTest            # JVM unit tests
 cd workers && .venv/bin/python -m unittest discover -s tests  # workers tests
+cd web && php artisan test && npm run types:check              # web (see web/CLAUDE.md)
 ```

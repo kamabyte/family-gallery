@@ -83,7 +83,8 @@ rather than discovered on a device (`GridMetricsTest`).
 ## Getting started
 
 1. **Index your photos** — see [`workers/README.md`](workers/README.md).
-2. **Run the app** — open `clients/android/` in Android Studio, put your SMB host/share in
+2. **Web app (prototype)** — see [`web/README.md`](web/README.md): Laravel + Inertia + React, fake data for now.
+3. **Run the app** — open `clients/android/` in Android Studio, put your SMB host/share in
    `clients/android/local.properties` (`gallery.host`, `gallery.share`, `gallery.basePath` — see
    [`clients/android/app/README.md`](clients/android/app/README.md)), and run on an Android TV device/emulator or on a phone. The same
    `assembleDebug` output installs on both; the device decides which shell it gets.
