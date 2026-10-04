@@ -1,0 +1,37 @@
+# Gallery indexer — Dokploy stack (type Compose, source Raw).
+#
+# One long-running container: indexes on start, every INDEX_INTERVAL, and within a
+# minute or so of new files settling in Photos/Imports. No domain, no ports — the app
+# reads the results straight from the SMB share (\\10.20.1.100\Media, base path Photos).
+#
+# Host data: /mnt/seagate12tb/Media/Photos (originals in YYYY/MM, Imports/, .gallery/).
+# It must exist before the first deploy (create_host_path: false — without the HDD the
+# container refuses to start instead of writing to the system SSD).
+
+services:
+  indexer:
+    image: ghcr.io/kamabyte/family-gallery-indexer:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    init: true                          # reaps ffmpeg children, forwards SIGTERM
+    stop_grace_period: 60s              # an interrupted run never publishes; let it unwind
+    # 1000:3000 = lenar:media: writes to the NTFS media disk are only possible as group 3000.
+    user: "1000:3000"
+    environment:
+      TZ: ${TZ:-Europe/Moscow}          # EXIF has no zone — read in this local time
+      IMPORT_SETTLE: ${IMPORT_SETTLE:-300}
+      INDEX_INTERVAL: ${INDEX_INTERVAL:-21600}
+      # os.cpu_count() ignores the CPU limit below, so the worker count is explicit.
+      WORKERS: ${WORKERS:-2}
+    volumes:
+      # Only the Photos subtree, read-write: ingest moves files out of Imports and the
+      # indexer writes .gallery/. The rest of the media library stays out of reach.
+      - type: bind
+        source: /mnt/seagate12tb/Media/Photos
+        target: /photos
+        bind: { create_host_path: false }
+    deploy:
+      resources:
+        limits:
+          cpus: "2"                     # 4 cores shared with Jellyfin; it runs niced too
+          memory: 4g                    # ~1.5 GiB per worker + ffmpeg

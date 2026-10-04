@@ -36,6 +36,7 @@ Usage:
   python3 indexer.py --source /Volumes/Photos --import-dir Drop
   python3 indexer.py --source /Volumes/Photos --rebuild
   python3 indexer.py --source /Volumes/Photos --workers 4      # explicit worker override
+  python3 indexer.py --source /Volumes/Photos --import-settle 300   # unattended runs
 """
 from __future__ import annotations
 
@@ -224,6 +225,7 @@ class MediaRecord:
 class Stats:
     imported: int = 0
     import_dupes: int = 0
+    import_waiting: int = 0    # Imports files skipped as still being written
     added: int = 0
     updated: int = 0
     skipped: int = 0
@@ -911,6 +913,22 @@ def unique_path(dest: Path) -> Path:
         i += 1
 
 
+def is_settled(path: Path, settle_s: float, now: Optional[float] = None) -> bool:
+    """True once ``path`` has gone ``settle_s`` seconds without a write.
+
+    Guards ingest against a file that is still being copied in over SMB: moving it would
+    "verify" the partial copy against the equally partial source and then delete the
+    source. ``st_ctime`` is included because a client that preserves the original
+    timestamps (Finder does) sets an old ``st_mtime`` on the half-written file, while the
+    change time always moves with every write and attribute update.
+    """
+    if settle_s <= 0:
+        return True
+    st = path.stat()
+    last_change = max(st.st_mtime, st.st_ctime)
+    return (time.time() if now is None else now) - last_change >= settle_s
+
+
 def safe_move(src: Path, dest: Path) -> None:
     """Copy -> verify size -> atomic rename -> remove original. Never loses the file."""
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -924,7 +942,7 @@ def safe_move(src: Path, dest: Path) -> None:
 
 
 def run_ingest(source: Path, import_dir: str, existing_hashes: Set[str],
-            stats: Stats) -> None:
+            stats: Stats, settle_s: float = 0.0) -> None:
     idir = source / import_dir
     if not idir.is_dir():
         return
@@ -932,6 +950,9 @@ def run_ingest(source: Path, import_dir: str, existing_hashes: Set[str],
     dup_dir = idir / DUPLICATES_DIRNAME
     for path in iter_media(idir, skip_names={DUPLICATES_DIRNAME}):
         try:
+            if not is_settled(path, settle_s):
+                stats.import_waiting += 1
+                continue
             size = path.stat().st_size
             digest = content_hash(path, size)
             if digest in existing_hashes:
@@ -950,6 +971,9 @@ def run_ingest(source: Path, import_dir: str, existing_hashes: Set[str],
             stats.failed += 1
     if stats.imported or stats.import_dupes:
         log(f"  imported={stats.imported} duplicates_set_aside={stats.import_dupes}")
+    if stats.import_waiting:
+        log(f"  {stats.import_waiting} file(s) changed in the last {settle_s:g}s — "
+            "left in place until the copy settles")
 
 
 # --- Geocoding + album building ----------------------------------------------
@@ -1594,7 +1618,7 @@ def _run_locked(args: argparse.Namespace, source: Path, gallery_root: Path) -> i
 
     # 1. INGEST
     if not args.no_import:
-        run_ingest(source, args.import_dir, load_hashes(conn), stats)
+        run_ingest(source, args.import_dir, load_hashes(conn), stats, args.import_settle)
 
     # 2. INDEX — collect the files that need (re)processing, then fan out to workers.
     signatures = load_signatures(conn)
@@ -1796,6 +1820,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--import-dir", default=DEFAULT_IMPORT_DIR,
                 help=f"Dropbox folder to ingest, relative to source (default: {DEFAULT_IMPORT_DIR}).")
     p.add_argument("--no-import", action="store_true", help="Skip the ingest phase.")
+    p.add_argument("--import-settle", type=float, default=0.0, metavar="SECONDS",
+                help="Leave Imports files written to in the last SECONDS for a later run, so a "
+                    "copy still in progress is never moved. Use it for unattended runs "
+                    "(default: 0, ingest everything).")
     p.add_argument("--thumb", type=int, default=320, help="Thumbnail long-edge px.")
     p.add_argument("--preview", type=int, default=1600, help="Preview long-edge px.")
     p.add_argument("--workers", type=int, default=0,
