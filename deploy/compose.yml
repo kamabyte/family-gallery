@@ -1,8 +1,13 @@
-# Family gallery workers — Dokploy stack (type Compose, source Raw).
+# Family gallery — Dokploy stack (type Compose, source Raw), project family-gallery.
 #
-# One long-running container: indexes on start, every INDEX_INTERVAL, and within a
-# minute or so of new files settling in Imports. No domain, no ports — the app reads the
-# results straight from the SMB share \\10.20.1.100\Photos (share Photos, empty base path).
+#   indexer  workers image: indexes on start, every INDEX_INTERVAL, and within a minute
+#            or so of new files settling in Imports. No domain, no ports — the Android app
+#            reads the results straight from the SMB share \\10.20.1.100\Photos.
+#   web      Laravel + Inertia web app, domain photos.home.internal (set in Dokploy →
+#            Domains: service web, port 8080, HTTPS off). Prototype on fake data for now.
+#
+# Stack Environment in Dokploy: APP_KEY (secret, `php artisan key:generate --show`),
+# WORKERS_TAG / WEB_TAG (latest or sha-… to roll back), optionally TZ.
 #
 # Host data: /srv/family-gallery/photos on the system SSD (originals in YYYY/MM, Imports/,
 # .gallery/). The homelab Samba stage creates it (2775 lenar:media) along with the share;
@@ -10,7 +15,7 @@
 
 services:
   indexer:
-    image: ghcr.io/kamabyte/family-gallery-workers:${IMAGE_TAG:-latest}
+    image: ghcr.io/kamabyte/family-gallery-workers:${WORKERS_TAG:-latest}
     pull_policy: always
     restart: unless-stopped
     init: true                          # reaps ffmpeg children, forwards SIGTERM
@@ -34,3 +39,37 @@ services:
         limits:
           cpus: "2"                     # 4 cores shared with Jellyfin; it runs niced too
           memory: 4g                    # ~1.5 GiB per worker + ffmpeg
+
+  web:
+    image: ghcr.io/kamabyte/family-gallery-web:${WEB_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      APP_NAME: Фотографии
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ${APP_KEY:?задайте APP_KEY во вкладке Environment стека}
+      APP_URL: http://photos.home.internal
+      APP_LOCALE: ru
+      APP_TIMEZONE: ${TZ:-Europe/Moscow}
+      LOG_CHANNEL: stderr
+      # No database yet: sessions (the prototype's favourites) and cache are files.
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      GALLERY_DRIVER: fake
+      # Config/route/view caches at start (serversideup automation); nothing to migrate.
+      AUTORUN_ENABLED: "true"
+      AUTORUN_LARAVEL_MIGRATION: "false"
+    expose:
+      - "8080"                          # domain port in Dokploy; no ports: — Traefik only
+    networks: [default, dokploy-network]
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512m
+
+networks:
+  dokploy-network:
+    external: true
