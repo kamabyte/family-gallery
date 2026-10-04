@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { monthTitle } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Bucket } from '@/types';
@@ -9,6 +9,9 @@ interface Props {
     onJump: (month: string) => void;
 }
 
+/** Подписи лет не ближе этого по вертикали: у редких лет полоса — пара пикселей. */
+const LABEL_GAP_PX = 16;
+
 /**
  * Полоса времени справа, как у Immich: высота месяца пропорциональна числу
  * кадров, годы подписаны. Наведение показывает месяц, щелчок — переносит туда.
@@ -16,9 +19,36 @@ interface Props {
 export function TimelineScrubber({ buckets, current, onJump }: Props) {
     const [hover, setHover] = useState<string | null>(null);
     const total = useMemo(() => buckets.reduce((sum, b) => sum + b.count, 0), [buckets]);
+    const navRef = useRef<HTMLElement>(null);
+    const [height, setHeight] = useState(0);
+
+    useLayoutEffect(() => {
+        const nav = navRef.current;
+        if (!nav) return;
+        const observer = new ResizeObserver(([entry]) => setHeight(entry.contentRect.height));
+        observer.observe(nav);
+        return () => observer.disconnect();
+    }, []);
+
+    // Какие годы подписать: первый месяц года, если до прошлой подписи есть место.
+    const labelled = useMemo(() => {
+        const result = new Set<string>();
+        let offset = 0;
+        let last = -Infinity;
+        buckets.forEach((bucket, index) => {
+            const firstOfYear = index === 0 || buckets[index - 1].month.slice(0, 4) !== bucket.month.slice(0, 4);
+            if (firstOfYear && offset - last >= LABEL_GAP_PX) {
+                result.add(bucket.month);
+                last = offset;
+            }
+            offset += (bucket.count / total) * height;
+        });
+        return result;
+    }, [buckets, total, height]);
 
     return (
         <nav
+            ref={navRef}
             aria-label="Перейти к месяцу"
             className="fixed top-20 right-1 bottom-6 z-10 hidden w-14 flex-col select-none md:flex"
             onMouseLeave={() => setHover(null)}
@@ -39,7 +69,7 @@ export function TimelineScrubber({ buckets, current, onJump }: Props) {
                         className="group relative flex min-h-px w-full items-start justify-end pr-2"
                         style={{ flexGrow: bucket.count / total }}
                     >
-                        {firstOfYear && <span className="absolute -top-1 right-4 text-[11px] font-medium text-muted-foreground tabular-nums">{year}</span>}
+                        {labelled.has(bucket.month) && <span className="absolute -top-1 right-4 text-[11px] font-medium text-muted-foreground tabular-nums">{year}</span>}
                         <span
                             className={cn(
                                 'mt-px h-px w-1.5 rounded-full bg-muted-foreground/30 transition-all group-hover:w-3 group-hover:bg-foreground',
