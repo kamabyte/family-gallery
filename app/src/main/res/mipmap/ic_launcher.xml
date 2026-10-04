@@ -1,0 +1,12 @@
+<!--
+  Pre-API-26 launcher icon: the complete tile, background and pinwheel together, since old
+  launchers cannot compose the adaptive layers in mipmap-anydpi-v26/ic_launcher.xml.
+
+  This is a thin alias rather than a copy so the artwork has exactly one definition. It stays
+  separate from `@drawable/ic_launcher` on purpose: that one is also the splash logo, and pointing
+  the manifest at it directly would make API 26+ resolve the splash to an AdaptiveIconDrawable
+  and render the launcher's mask in the middle of the startup screen.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_launcher" />
+</layer-list>

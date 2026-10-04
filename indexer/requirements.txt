@@ -1,0 +1,12 @@
+# Image decoding / resizing
+Pillow>=10.0.0
+# HEIC/HEIF support (iPhone photos). Pulls in libheif via a bundled wheel.
+pillow-heif>=0.16.0
+
+# Offline reverse geocoding for "Places" albums (GPS -> city/country).
+# Bundles a city dataset; no network or API key needed at runtime.
+reverse_geocoder>=1.5.1
+pycountry>=23.12.11
+
+# Video posters + metadata use the ffmpeg / ffprobe binaries directly (subprocess),
+# so they must be installed on the machine (e.g. `brew install ffmpeg`).

@@ -1,0 +1,47 @@
+<!--
+  Self-contained brand tile for in-app use (navigation rail). Unlike ic_launcher (the launcher
+  tile, whose pinwheel sits with generous margins so it reads well as a home-screen icon), this
+  scales the pinwheel up to fill the tile so the mark stays large on dark in-app surfaces.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Rounded tile background (the Image clips the corners). -->
+    <path
+        android:fillColor="#191636"
+        android:pathData="M0,0H108V108H0Z" />
+    <path
+        android:fillColor="#221D4A"
+        android:pathData="M0,74L74,0H108V108H0Z" />
+
+    <!-- Four-petal pinwheel, scaled up around the centre (54,54) to fill the tile. -->
+    <group android:pivotX="54" android:pivotY="54" android:scaleX="1.45" android:scaleY="1.45">
+        <group android:pivotX="54" android:pivotY="54" android:rotation="0">
+            <path
+                android:fillColor="#7B72E9"
+                android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+        </group>
+        <group android:pivotX="54" android:pivotY="54" android:rotation="90">
+            <path
+                android:fillColor="#5AD0AE"
+                android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+        </group>
+        <group android:pivotX="54" android:pivotY="54" android:rotation="180">
+            <path
+                android:fillColor="#FFC24B"
+                android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+        </group>
+        <group android:pivotX="54" android:pivotY="54" android:rotation="270">
+            <path
+                android:fillColor="#FF6F7D"
+                android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+        </group>
+
+        <!-- Clean white hub -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,54m-6,0a6,6 0,1 0,12 0a6,6 0,1 0,-12 0" />
+    </group>
+</vector>

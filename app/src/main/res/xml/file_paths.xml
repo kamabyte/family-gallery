@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The only thing this app ever exports. Media lives on an SMB share that no other app can
+    reach, so sharing first stages a copy under cacheDir/share/ (see MediaShareStager) and hands
+    out a grant-scoped content URI for it. Nothing else in the app's storage — least of all the
+    synced catalog, which holds capture dates, GPS places and filenames — is reachable this way.
+-->
+<paths>
+    <cache-path name="shared_media" path="share/" />
+</paths>

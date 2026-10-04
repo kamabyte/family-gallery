@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Фотографии</string>
+
+    <!-- Tabs -->
+    <string name="tab_timeline">Фото</string>
+    <string name="tab_albums">Альбомы</string>
+
+    <!-- Connection -->
+    <string name="connecting">Подключение к хранилищу фото…</string>
+    <string name="connection_error_title">Нет доступа к хранилищу фото</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="retry">Повторить</string>
+    <string name="back">Назад</string>
+
+    <!-- Photo grid -->
+    <string name="loading_photos">Загрузка фото…</string>
+    <string name="load_photos_error">Не удалось загрузить фото</string>
+    <string name="no_photos_title">Пока нет фото</string>
+    <string name="no_photos_subtitle">Запустите индексатор для вашей папки, затем переподключитесь.</string>
+
+    <!-- Albums -->
+    <string name="no_albums_title">Пока нет альбомов</string>
+    <string name="no_albums_subtitle">Альбомы появятся, когда у фото есть дата, место или данные камеры.</string>
+    <string name="album_type_place">Места</string>
+    <string name="album_type_camera">Камеры</string>
+    <string name="album_type_year">Годы</string>
+    <string name="album_type_trip">Путешествия</string>
+    <string name="album_item_count">%d фото</string>
+    <plurals name="album_count">
+        <item quantity="one">%d альбом</item>
+        <item quantity="few">%d альбома</item>
+        <item quantity="many">%d альбомов</item>
+        <item quantity="other">%d альбома</item>
+    </plurals>
+    <string name="albums_empty_category">В этой категории пока нет альбомов</string>
+
+    <!-- Smart albums -->
+    <string name="smart_videos_title">Видео</string>
+    <string name="smart_on_this_day_title">В этот день</string>
+    <string name="smart_seasons_title">Времена года</string>
+    <string name="smart_videos_count">%d видео</string>
+    <plurals name="season_count">
+        <item quantity="one">%d сезон</item>
+        <item quantity="few">%d сезона</item>
+        <item quantity="many">%d сезонов</item>
+        <item quantity="other">%d сезона</item>
+    </plurals>
+    <string name="season_winter">Зима</string>
+    <string name="season_spring">Весна</string>
+    <string name="season_summer">Лето</string>
+    <string name="season_autumn">Осень</string>
+
+    <!-- Viewer -->
+    <string name="slideshow">Слайд-шоу</string>
+    <string name="close">Закрыть</string>
+    <string name="stop_slideshow">Остановить слайд-шоу</string>
+    <string name="play_video">▶ Воспроизвести</string>
+    <string name="buffering_video">Загрузка видео…</string>
+    <string name="video_playback_error">Не удалось воспроизвести видео</string>
+    <string name="video_requires_reindex">Обновите каталог индексатором для воспроизведения</string>
+
+    <!-- Sharing (phones only) -->
+    <string name="share">Поделиться</string>
+    <string name="share_chooser_title">Поделиться</string>
+    <string name="share_preparing">Подготовка файла…</string>
+    <string name="share_preparing_count">Подготовка: %1$d из %2$d</string>
+    <string name="share_failed">Не удалось подготовить файлы</string>
+    <string name="share_limit_reached">Можно выбрать не более %d файлов</string>
+    <string name="selection_cancel">Отменить выбор</string>
+    <plurals name="selection_count">
+        <item quantity="one">Выбрано %d</item>
+        <item quantity="few">Выбрано %d</item>
+        <item quantity="many">Выбрано %d</item>
+        <item quantity="other">Выбрано %d</item>
+    </plurals>
+</resources>

@@ -1,0 +1,33 @@
+<!--
+  Themed-icon layer (Android 13+). The launcher tints this single-colour silhouette with the
+  user's wallpaper palette, so it must be one flat shape with no brand colours of its own —
+  the pinwheel outline plus its hub, drawn in white and recoloured by the system.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108"
+    android:tint="#FFFFFF">
+
+    <group android:pivotX="54" android:pivotY="54" android:rotation="0">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="90">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="180">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+    </group>
+    <group android:pivotX="54" android:pivotY="54" android:rotation="270">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+    </group>
+</vector>

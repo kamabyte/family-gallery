@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Display-cutout handling, added from API 27 (the attribute does not exist below it).
+
+      `shortEdges` lets the window extend into the notch area rather than being letterboxed by a
+      black bar — which matters for a photo gallery on notched phones such as the Mi 8 (Android P),
+      our oldest phone target. It is safe because the phone shell consumes WindowInsets: chrome is
+      inset away from the cutout, and only full-bleed photos are allowed underneath it.
+    -->
+    <style name="Theme.FamilyGallery" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_window_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    </style>
+</resources>

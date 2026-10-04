@@ -1,0 +1,23 @@
+<!--
+  Adaptive-icon background layer. Full-bleed 108x108 by design: the launcher masks it to whatever
+  shape the device uses (circle, squircle, rounded square), so it must have no shape of its own.
+
+  This was briefly drawn as a circle, to force a circular icon on launchers that mask to a
+  squircle. That is a trap: a launcher which does *not* mask still needs something to fill the
+  corners, and MIUI fills the transparency with flat black — producing a purple disc sitting on a
+  black square, which looks broken rather than round. Full-bleed is the only form that is correct
+  under every mask, and it is what makes the icon a clean circle on circle-masking launchers.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Same two-tone diagonal as the splash logo in @drawable/ic_launcher. -->
+    <path
+        android:fillColor="#191636"
+        android:pathData="M0,0H108V108H0Z" />
+    <path
+        android:fillColor="#221D4A"
+        android:pathData="M0,74L74,0H108V108H0Z" />
+</vector>

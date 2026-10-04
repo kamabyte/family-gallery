@@ -1,0 +1,51 @@
+<!--
+  Adaptive-icon foreground layer: the four-petal pinwheel plus its white hub.
+
+  Adaptive icons render the middle 72x72 of this 108x108 canvas ("the safe zone") — the outer ring
+  is reserved for the parallax and mask the launcher applies.
+
+  The mark is scaled to 78% about the centre. At full size the petals reach a radius of ~33, so
+  they all but touch the edge of the safe zone: on a device screen that read as cramped next to
+  neighbouring icons, and a circular mask clipped the petal tips. At 78% the mark fills roughly
+  70% of the masked area, which is the proportion Material icons use, and survives every mask.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="0.78"
+        android:scaleY="0.78">
+
+        <!-- One petal, rotated around the centre (54,54) into each brand colour. -->
+        <group android:pivotX="54" android:pivotY="54" android:rotation="0">
+            <path
+                android:fillColor="#7B72E9"
+                android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+        </group>
+        <group android:pivotX="54" android:pivotY="54" android:rotation="90">
+            <path
+                android:fillColor="#5AD0AE"
+                android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+        </group>
+        <group android:pivotX="54" android:pivotY="54" android:rotation="180">
+            <path
+                android:fillColor="#FFC24B"
+                android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+        </group>
+        <group android:pivotX="54" android:pivotY="54" android:rotation="270">
+            <path
+                android:fillColor="#FF6F7D"
+                android:pathData="M54,54C46,49 43,38 46,28C48,21 60,21 62,28C65,38 62,49 54,54Z" />
+        </group>
+
+        <!-- Clean white hub -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M54,54m-6,0a6,6 0,1 0,12 0a6,6 0,1 0,-12 0" />
+    </group>
+</vector>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- One APK for both form factors: it must install on TV boxes (no touchscreen, leanback
+         launcher) AND on phones/tablets (touch, no leanback). Both features are therefore
+         optional, and MainActivity picks a D-pad or a touch shell at runtime. -->
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+
+    <!-- The local catalog holds private capture dates, GPS places, filenames and camera
+         metadata; it is fully re-syncable from the NAS, so we do not back it up off-device
+         (allowBackup=false) and exclude everything from cloud backup / device transfer. -->
+    <application
+        android:name=".GalleryApplication"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:banner="@mipmap/app_banner"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.FamilyGallery">
+
+        <!-- Orientation is left unspecified so phones can rotate (TVs are landscape-only anyway,
+             so nothing is lost there). The activity declares every configuration it handles
+             itself: rotating must NOT recreate the Activity, because that would drop the paging
+             window, scroll position and the Albums back-stack. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:resizeableActivity="true"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density|keyboardHidden|uiMode">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <!-- LEANBACK_LAUNCHER puts it on the Android TV home screen; LAUNCHER puts it in
+                     the phone/tablet app drawer. Declaring both keeps this a single APK. -->
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Sharing hands a file to another app, and the media only exists on an SMB share this
+             process alone can reach. MediaShareStager stages a copy under cacheDir/share/ and
+             this provider exports *only* that directory (see @xml/file_paths), per-intent and
+             read-only. Not exported: access comes solely from the URI grant on the share intent. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+
+</manifest>

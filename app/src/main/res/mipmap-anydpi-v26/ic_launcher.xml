@@ -1,0 +1,12 @@
+<!--
+  Adaptive launcher icon (API 26+), which is every phone we target.
+
+  Without this the legacy 108dp vector is treated as a fixed bitmap: launchers shrink it and drop
+  it onto a white plate, so the app reads as unfinished in the drawer. Android TV ignores adaptive
+  icons and uses `android:banner` instead, so this file changes nothing there.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_monochrome" />
+</adaptive-icon>

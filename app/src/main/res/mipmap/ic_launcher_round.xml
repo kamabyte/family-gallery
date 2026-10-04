@@ -1,0 +1,11 @@
+<!--
+  Pre-API-26 round icon: the circular background and the pinwheel composed by hand, since old
+  launchers cannot combine adaptive layers themselves.
+
+  Both layers are already sized for a circle, so stacking them reproduces exactly what API 26+
+  devices get from mipmap-anydpi-v26/ic_launcher_round.xml.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_launcher_background" />
+    <item android:drawable="@drawable/ic_launcher_foreground" />
+</layer-list>

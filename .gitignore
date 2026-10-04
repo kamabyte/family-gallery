@@ -1,0 +1,34 @@
+# --- Android / Gradle ---
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+build/
+/captures/
+.externalNativeBuild/
+.cxx/
+.kotlin/
+*.apk
+*.aab
+*.keystore
+
+# --- Kotlin/Java ---
+*.class
+*.log
+
+# --- Python indexer ---
+indexer/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# --- Local config with secrets / machine paths ---
+indexer/config.local.*
+app/src/main/res/values/secrets.xml
+
+# --- Generated gallery data (kept on the NAS, never committed) ---
+.gallery/
+
+# --- Local code index (machine-specific, rebuilt with `codegraph init`) ---
+/.codegraph

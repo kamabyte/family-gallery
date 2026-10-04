@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base theme for a Compose-driven app on TV *and* phones: no ActionBar, dark background so
+         Compose owns the whole surface and there's no flash on launch. The bars are transparent
+         because the phone shell draws edge-to-edge and applies the insets itself. -->
+    <style name="Theme.FamilyGallery" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_window_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- The UI is permanently dark, so bar icons must stay light in both orientations. -->
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
