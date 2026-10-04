@@ -55,15 +55,17 @@ progress). Without it, an unattended run could move a half-copied photo and dele
 On the home server the indexer runs unattended as a Dokploy stack instead of by hand:
 
 ```
-drop files into \\10.20.1.100\Media\Photos\Imports  ─►  within ~6 min they're filed and published
+drop files into \\10.20.1.100\Photos\Imports  ─►  within ~6 min they're filed and published
 ```
 
 - **Image:** `ghcr.io/kamabyte/family-gallery-indexer`, built by
   `.github/workflows/indexer-image.yml` (tests first) on every push touching `indexer/`;
   `latest` tracks `main`.
-- **Stack:** [`deploy/compose.yml`](../deploy/compose.yml), Dokploy project `apps`, stack
-  `family-gallery-indexer`, source Raw. Library at `/mnt/seagate12tb/Media/Photos`, mounted
-  read-write as `/photos`, run as `1000:3000` (`lenar:media`). No domain, no ports.
+- **Stack:** [`deploy/compose.yml`](../deploy/compose.yml), Dokploy project `family-gallery`,
+  stack `indexer`, source Raw. Library on the system SSD at `/srv/family-gallery/photos`
+  (the homelab Samba stage creates it and the `Photos` share), mounted read-write as
+  `/photos`, run as `1000:3000` (`lenar:media`). No domain, no ports. The app's
+  `local.properties`: `gallery.host=10.20.1.100`, `gallery.share=Photos`, `gallery.basePath=`.
 - **`service.py`** is the container's process. It runs `indexer.py` at start, every
   `INDEX_INTERVAL` (6 h), and as soon as Imports holds settled files it hasn't tried yet
   (checked every minute, `IMPORT_SETTLE` = 5 min). Runs never overlap; a failed run backs off
@@ -77,8 +79,8 @@ Logs: Dokploy → stack → Logs. Manual runs inside the container (they take th
 lock, so the service just skips a pass that collides with one):
 
 ```bash
-docker exec -it $(docker ps -qf name=family-gallery-indexer) python indexer.py --source /photos --no-import
-docker exec -it $(docker ps -qf name=family-gallery-indexer) python refresh_metadata.py --source /photos --dry-run
+docker exec -it $(docker ps -qf name=family-gallery) python indexer.py --source /photos --no-import
+docker exec -it $(docker ps -qf name=family-gallery) python refresh_metadata.py --source /photos --dry-run
 ```
 
 Deploy a new version: push to `main`, wait for the `indexer-image` run, then **Deploy** the

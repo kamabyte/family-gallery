@@ -17,8 +17,8 @@ RUN pip install --no-cache-dir -r requirements.txt \
 
 COPY indexer.py refresh_metadata.py service.py ./
 
-# 1000:3000 = lenar:media on the server — the only identity that can write to the
-# NTFS media disk (homelab docs/storage.md).
+# 1000:3000 = lenar:media on the server — owner and group of the library and of every
+# file that arrives through the Photos SMB share.
 RUN groupadd --gid 3000 media && useradd --uid 1000 --gid media --no-create-home --home-dir /app indexer
 USER 1000:3000
 

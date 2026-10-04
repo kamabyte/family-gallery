@@ -1,12 +1,12 @@
 # Gallery indexer — Dokploy stack (type Compose, source Raw).
 #
 # One long-running container: indexes on start, every INDEX_INTERVAL, and within a
-# minute or so of new files settling in Photos/Imports. No domain, no ports — the app
-# reads the results straight from the SMB share (\\10.20.1.100\Media, base path Photos).
+# minute or so of new files settling in Imports. No domain, no ports — the app reads the
+# results straight from the SMB share \\10.20.1.100\Photos (share Photos, empty base path).
 #
-# Host data: /mnt/seagate12tb/Media/Photos (originals in YYYY/MM, Imports/, .gallery/).
-# It must exist before the first deploy (create_host_path: false — without the HDD the
-# container refuses to start instead of writing to the system SSD).
+# Host data: /srv/family-gallery/photos on the system SSD (originals in YYYY/MM, Imports/,
+# .gallery/). The homelab Samba stage creates it (2775 lenar:media) along with the share;
+# create_host_path: false keeps a typo here from silently starting on an empty library.
 
 services:
   indexer:
@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
     init: true                          # reaps ffmpeg children, forwards SIGTERM
     stop_grace_period: 60s              # an interrupted run never publishes; let it unwind
-    # 1000:3000 = lenar:media: writes to the NTFS media disk are only possible as group 3000.
+    # 1000:3000 = lenar:media — same owner/group as files arriving through the Photos share.
     user: "1000:3000"
     environment:
       TZ: ${TZ:-Europe/Moscow}          # EXIF has no zone — read in this local time
@@ -24,10 +24,9 @@ services:
       # os.cpu_count() ignores the CPU limit below, so the worker count is explicit.
       WORKERS: ${WORKERS:-2}
     volumes:
-      # Only the Photos subtree, read-write: ingest moves files out of Imports and the
-      # indexer writes .gallery/. The rest of the media library stays out of reach.
+      # Read-write: ingest moves files out of Imports and the indexer writes .gallery/.
       - type: bind
-        source: /mnt/seagate12tb/Media/Photos
+        source: /srv/family-gallery/photos
         target: /photos
         bind: { create_host_path: false }
     deploy:
