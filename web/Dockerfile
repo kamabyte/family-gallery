@@ -23,7 +23,7 @@ COPY . ./
 RUN composer dump-autoload --no-dev --optimize --classmap-authoritative \
  && cp .env.example .env && php artisan key:generate --force --quiet \
  && php artisan package:discover --ansi \
- && npm run types:check && npm run build \
+ && npm run build && npm run types:check \
  && rm -rf node_modules .env public/hot
 
 # --- Application -----------------------------------------------------------------

@@ -42,7 +42,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
       # Wayfinder's vite plugin runs `php artisan wayfinder:generate` — artisan needs .env first.
       - run: cp .env.example .env && php artisan key:generate
-      - run: npm run types:check && npm run build
+      - run: npm run build && npm run types:check   # build generates Wayfinder files first
       - run: php artisan test
       - run: vendor/bin/pint --test
 
