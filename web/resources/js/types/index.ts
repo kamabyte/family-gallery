@@ -20,7 +20,7 @@ export interface Photo {
     gps: { lat: number; lon: number } | null;
 }
 
-export type AlbumType = 'place' | 'camera' | 'year' | 'smart';
+export type AlbumType = 'trip' | 'place' | 'camera' | 'year' | 'smart';
 
 export interface Album {
     id: string;
@@ -52,6 +52,8 @@ export interface LibraryStatus {
     videos: number;
     indexed_at: string;
     size_bytes: number;
+    /** Сгенерированная библиотека прототипа, а не каталог индексатора. */
+    fake: boolean;
 }
 
 export type Role = 'admin' | 'member' | 'guest';

@@ -40,7 +40,11 @@ class HandleInertiaRequests extends Middleware
                 ->map(fn (Album $a) => ['id' => $a->id, 'name' => $a->name, 'count' => $a->count])
                 ->values()
                 ->all(),
-            'library' => fn () => $user === null ? null : app(GalleryCatalog::class)->status(),
+            'library' => fn () => $user === null ? null : [
+                ...app(GalleryCatalog::class)->status(),
+                // «Прототип · тестовые данные» — только у сгенерированной библиотеки.
+                'fake' => config('gallery.driver') === 'fake',
+            ],
         ];
     }
 }

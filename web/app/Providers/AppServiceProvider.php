@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Gallery\Catalog\IndexerCatalog;
 use App\Gallery\Fake\FakeGalleryCatalog;
 use App\Gallery\Favorites;
 use App\Gallery\GalleryCatalog;
@@ -19,6 +20,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->scoped(Favorites::class, fn ($app) => new Favorites(fn () => $app['auth']->user()));
 
         $this->app->scoped(GalleryCatalog::class, fn ($app) => match (config('gallery.driver')) {
+            'catalog' => new IndexerCatalog(
+                favorites: $app->make(Favorites::class),
+                root: rtrim((string) config('gallery.root'), '/'),
+                timezone: config('app.timezone'),
+            ),
             'fake' => new FakeGalleryCatalog(
                 favorites: $app->make(Favorites::class),
                 seed: config('gallery.fake.seed'),

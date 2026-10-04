@@ -1,10 +1,10 @@
 import { Link } from '@inertiajs/react';
-import { Camera, CalendarDays, Heart, MapPin, Video } from 'lucide-react';
+import { Camera, CalendarDays, Heart, MapPin, Plane, Video } from 'lucide-react';
 import { items, videos, yearRange } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Album } from '@/types';
 
-const ICONS = { place: MapPin, camera: Camera, year: CalendarDays, favorites: Heart, videos: Video };
+const ICONS = { trip: Plane, place: MapPin, camera: Camera, year: CalendarDays, favorites: Heart, videos: Video };
 
 export function albumIcon(album: Pick<Album, 'id' | 'type'>) {
     if (album.type === 'smart') return album.id === 'videos' ? ICONS.videos : ICONS.favorites;

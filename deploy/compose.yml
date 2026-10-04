@@ -5,7 +5,7 @@
 #            reads the results straight from the SMB share \\10.20.1.100\Photos.
 #   web      Laravel + Inertia web app, domain photos.home.internal (set in Dokploy →
 #            Domains: service web, port 8080, HTTPS off). Login with roles; the library
-#            is still the fake catalog. Accounts, sessions and favourites: SQLite in
+#            is the indexer's catalog, read-only. Accounts, sessions and favourites: SQLite in
 #            /srv/family-gallery/web (1000:3000), dumped by the nightly backup.
 #            First admin: docker exec … php artisan gallery:user <email>
 #
@@ -63,7 +63,11 @@ services:
       SESSION_LIFETIME: "43200"           # 30 days — it's a family photo album
       CACHE_STORE: database
       QUEUE_CONNECTION: sync
-      GALLERY_DRIVER: fake
+      # The indexer's published catalog; thumbnails and originals go out through nginx
+      # (web/docker/nginx/gallery.conf) after the login check.
+      GALLERY_DRIVER: catalog
+      GALLERY_ROOT: /photos
+      GALLERY_ACCEL_REDIRECT: /_gallery_media
       # Migrations, config/route/view caches at start (serversideup automation).
       AUTORUN_ENABLED: "true"
       AUTORUN_LARAVEL_MIGRATION_ISOLATION: "false"
@@ -71,6 +75,12 @@ services:
       - type: bind
         source: /srv/family-gallery/web
         target: /data
+        bind: { create_host_path: false }
+      # The library — only read: the web app never changes photos or the catalog.
+      - type: bind
+        source: /srv/family-gallery/photos
+        target: /photos
+        read_only: true
         bind: { create_host_path: false }
     expose:
       - "8080"                          # domain port in Dokploy; no ports: — Traefik only

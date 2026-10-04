@@ -5,10 +5,29 @@ import { Button } from '@/components/ui/button';
 import { useSelection } from '@/hooks/use-selection';
 import { items } from '@/lib/format';
 
+const MAX_DOWNLOADS = 20;
+
 /** Шапка в режиме выбора: сколько выбрано и что с этим сделать. */
 export function SelectionBar() {
     const { selected, clear } = useSelection();
     const ids = [...selected];
+
+    // Оригиналы по одному: браузер один раз спросит разрешения на несколько загрузок.
+    function download() {
+        if (ids.length > MAX_DOWNLOADS) {
+            toast.error(`За раз — не больше ${MAX_DOWNLOADS}`, { description: 'Выберите меньше кадров или скачайте альбом частями.' });
+            return;
+        }
+        ids.forEach((id, index) =>
+            window.setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = `/photos/${id}/download`;
+                link.download = '';
+                link.click();
+            }, index * 400),
+        );
+        clear();
+    }
 
     function favorite() {
         router.put('/photos/favorite', { ids, favorite: true }, { preserveScroll: true, onSuccess: clear });
@@ -25,11 +44,7 @@ export function SelectionBar() {
                     <Heart className="size-[18px]" />
                     <span className="hidden sm:inline">В избранное</span>
                 </Button>
-                <Button
-                    variant="ghost"
-                    className="rounded-full"
-                    onClick={() => toast('Скачивание появится вместе с настоящим API', { description: 'Сейчас это прототип на тестовых данных.' })}
-                >
+                <Button variant="ghost" className="rounded-full" onClick={download}>
                     <Download className="size-[18px]" />
                     <span className="hidden sm:inline">Скачать</span>
                 </Button>

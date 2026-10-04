@@ -1,7 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Camera, ChevronLeft, ChevronRight, Download, FileImage, Heart, Info, MapPin, Pause, Play, X } from 'lucide-react';
 import { type PointerEvent, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
 import { albumIcon } from '@/components/album-card';
 import { viewerHref } from '@/components/photo-tile';
 import { Button } from '@/components/ui/button';
@@ -186,12 +185,22 @@ export default function Viewer({ photo, previous, next, position, from, albums }
                             <ViewerButton label={photo.favorite ? 'Убрать из избранного (F)' : 'В избранное (F)'} onClick={toggleFavorite}>
                                 <Heart className={cn('size-5', photo.favorite && 'fill-[#ff5a5f] text-[#ff5a5f]')} />
                             </ViewerButton>
-                            <ViewerButton
-                                label="Скачать оригинал"
-                                onClick={() => toast('Скачивание появится вместе с настоящим API', { description: photo.filename })}
-                            >
-                                <Download className="size-5" />
-                            </ViewerButton>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        asChild
+                                        variant="ghost"
+                                        size="icon"
+                                        className="size-10 rounded-full text-white hover:bg-white/15 hover:text-white"
+                                    >
+                                        {/* Обычная ссылка, не Inertia: файл скачивает браузер. */}
+                                        <a href={`/photos/${photo.id}/download`} download={photo.filename} aria-label="Скачать оригинал">
+                                            <Download className="size-5" />
+                                        </a>
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Скачать оригинал · {photo.filename}</TooltipContent>
+                            </Tooltip>
                         </>
                     )}
                     <ViewerButton label="Сведения (I)" onClick={() => setInfo(!info)} active={info}>

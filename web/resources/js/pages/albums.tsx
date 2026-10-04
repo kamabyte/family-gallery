@@ -3,6 +3,7 @@ import { AlbumCard } from '@/components/album-card';
 import type { Album, AlbumType } from '@/types';
 
 const SECTIONS: { type: AlbumType; title: string; hint: string }[] = [
+    { type: 'trip', title: 'Путешествия', hint: 'Снимки вдали от дома, подряд по времени' },
     { type: 'place', title: 'Места', hint: 'Собраны по геометкам снимков' },
     { type: 'camera', title: 'Камеры', hint: 'Чем снимали — по данным EXIF' },
     { type: 'year', title: 'Годы', hint: '' },

@@ -3,7 +3,8 @@
 # .github/workflows/web-image.yml and run by Dokploy from deploy/compose.yml.
 #
 # State lives outside the image: SQLite (accounts, sessions, favourites) in /data, a bind
-# mount of /srv/family-gallery/web. The library itself is the fake catalog for now.
+# mount of /srv/family-gallery/web. The library is /photos, read-only: the catalog the
+# indexer publishes there, and its thumbnails served by nginx (docker/nginx/gallery.conf).
 
 # --- Build: the frontend needs PHP too -----------------------------------------
 # @laravel/vite-plugin-wayfinder calls `php artisan wayfinder:generate` during vite build,
@@ -44,6 +45,7 @@ RUN for id in 1000 3000; do \
     docker-php-serversideup-set-id www-data 1000:3000 \
  && docker-php-serversideup-set-file-permissions --owner 1000:3000 --service nginx
 
+COPY --chown=www-data:www-data docker/nginx/gallery.conf /etc/nginx/server-opts.d/gallery.conf
 COPY --chmod=755 docker/40-gallery-database.sh /etc/entrypoint.d/40-gallery-database.sh
 USER www-data
 WORKDIR /var/www/html

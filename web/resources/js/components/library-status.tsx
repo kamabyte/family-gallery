@@ -23,7 +23,7 @@ export function LibraryStatus() {
             <div>
                 {bytes(library.size_bytes)} · обновлена {when}
             </div>
-            <div className="mt-1 text-[11px] opacity-70">Прототип · тестовые данные</div>
+            {library.fake && <div className="mt-1 text-[11px] opacity-70">Прототип · тестовые данные</div>}
         </div>
     );
 }

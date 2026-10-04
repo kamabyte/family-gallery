@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\Api\TimelineMonthController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TimelineController;
@@ -16,12 +17,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/albums/{album}', [AlbumController::class, 'show'])->name('albums.show');
     Route::get('/search', SearchController::class)->name('search');
 
+    // Миниатюры, превью и видеопрокси — только после входа, по точному адресу из каталога.
+    Route::get('/media/{path}', [MediaController::class, 'show'])->where('path', '.+')->name('media');
+
     // JSON для ленты — в группе web: та же сессия и тот же вход, что у страниц.
     Route::get('/api/timeline/{month}', TimelineMonthController::class)
         ->where('month', '\d{4}-\d{2}')
         ->name('api.timeline.month');
 
     Route::middleware('can:family')->group(function () {
+        Route::get('/photos/{photo}/download', [MediaController::class, 'download'])->whereNumber('photo')->name('photos.download');
         Route::put('/photos/favorite', [PhotoController::class, 'favoriteMany'])->name('photos.favorite.many');
         Route::put('/photos/{photo}/favorite', [PhotoController::class, 'favorite'])->whereNumber('photo')->name('photos.favorite');
     });
