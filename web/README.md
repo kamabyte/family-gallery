@@ -23,6 +23,16 @@ php artisan serve --port=8010
 
 http://localhost:8010. Базы данных не нужно: сессии и кеш — в файлах.
 
+## На сервере
+
+http://photos.home.internal — сервис `web` стека Dokploy `gallery` (проект
+`family-gallery`, рядом с индексатором), см. [`deploy/compose.yml`](../deploy/compose.yml).
+Образ `ghcr.io/kamabyte/family-gallery-web` собирает `.github/workflows/web-image.yml`
+(сначала Pest и Pint) на каждый push в `web/`. Выкатка — Deploy стека в Dokploy;
+откат — `WEB_TAG=sha-…` во вкладке Environment. Там же секрет `APP_KEY`.
+
+Сессии — файлы внутри контейнера: выкатка сбрасывает избранное прототипа.
+
 ## Что есть
 
 | Страница | Что |
